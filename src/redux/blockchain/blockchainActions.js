@@ -48,35 +48,9 @@ export const connect = () => {
       },
     });
     const CONFIG = await configResponse.json();
-
-    let ethereum;
-    try {
-      ethereum = await window.web3Modal.connect();
-      window.provider = ethereum;
-    } catch (e) {
-      console.log("Could not get a wallet connection", e);
-      return;
-    }
-    // providerObj.on("accountsChanged", (accounts) => {
-    //   console.log(`accountsChanged = ${accounts}`);
-    //   //fetchAccountData();
-    // });
-    // providerObj.on("chainChanged", (chain_id) => {
-    //   console.log(`chainChanged ${chain_id}`);
-    //   fetchAccountData();
-    // });
-
-    // providerObj.on("disconnect", (error) => {
-    //   console.log(`disconnect ${error}`);
-    //   onDisconnect();
-    // });
-    // await fetchAccountData();
-
-
-    // const { ethereum } = window;
-    // const metamaskIsInstalled = ethereum && ethereum.isMetaMask;
-    // if (metamaskIsInstalled) {
-    console.log(ethereum, "======")
+    const { ethereum } = window;
+    const metamaskIsInstalled = ethereum && ethereum.isMetaMask;
+    if (metamaskIsInstalled) {
       Web3EthContract.setProvider(ethereum);
       let web3 = new Web3(ethereum);
       try {
@@ -112,9 +86,9 @@ export const connect = () => {
       } catch (err) {
         dispatch(connectFailed("Something went wrong."));
       }
-    // } else {
-    //   dispatch(connectFailed("Install Metamask."));
-    // }
+    } else {
+      dispatch(connectFailed("Install Metamask."));
+    }
   };
 };
 
