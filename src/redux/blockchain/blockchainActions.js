@@ -31,7 +31,7 @@ const updateAccountRequest = (payload) => {
   };
 };
 
-export const connect = () => {
+export const connect = (payload) => {
   return async (dispatch) => {
     dispatch(connectRequest());
     const abiResponse = await fetch("/config/abi.json", {
@@ -48,26 +48,28 @@ export const connect = () => {
       },
     });
     const CONFIG = await configResponse.json();
+
     const { ethereum } = window;
     const metamaskIsInstalled = ethereum && ethereum.isMetaMask;
-    if (metamaskIsInstalled) {
+
+    if (ethereum && payload.connector != undefined) {
       Web3EthContract.setProvider(ethereum);
       let web3 = new Web3(ethereum);
       try {
-        const accounts = await ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        const networkId = await ethereum.request({
-          method: "net_version",
-        });
-        if (networkId == CONFIG.NETWORK.ID) {
+        // const accounts = await ethereum.request({
+        //   method: "eth_requestAccounts",
+        // });
+        // const networkId = await ethereum.request({
+        //   method: "net_version",
+        // });
+        if (payload.chainId == CONFIG.NETWORK.ID) {
           const SmartContractObj = new Web3EthContract(
             abi,
             CONFIG.CONTRACT_ADDRESS
           );
           dispatch(
             connectSuccess({
-              account: accounts[0],
+              account: payload.account,
               smartContract: SmartContractObj,
               web3: web3,
             })
@@ -87,7 +89,7 @@ export const connect = () => {
         dispatch(connectFailed("Something went wrong."));
       }
     } else {
-      dispatch(connectFailed("Install Metamask."));
+      dispatch(connectFailed("Please connect your wallet"));
     }
   };
 };

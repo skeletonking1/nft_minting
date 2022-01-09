@@ -1,15 +1,31 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { ModalProvider, dark } from '@pancakeswap/uikit'
+import { ThemeProvider } from 'styled-components'
+import { Web3ReactProvider } from '@web3-react/core'
 import App from "./App";
+import { getLibrary } from './utils/web3React'
+import { LanguageProvider } from './contexts/Localization'
 import reportWebVitals from "./reportWebVitals";
 import store from "./redux/store";
 import { Provider } from "react-redux";
+import { ToastsProvider } from './contexts/ToastsContext'
 import "./styles/reset.css";
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <Web3ReactProvider getLibrary={getLibrary}>
+    <Provider store={store}>
+      <ToastsProvider>
+      <ThemeProvider theme={dark}>
+      <LanguageProvider>
+        <ModalProvider>
+          <App />
+        </ModalProvider>
+      </LanguageProvider>
+      </ThemeProvider>
+      </ToastsProvider>
+    </Provider>
+  </Web3ReactProvider>,
   document.getElementById("root")
 );
 
